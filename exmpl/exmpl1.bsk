@@ -1,0 +1,5 @@
+var name : int = 10;
+
+name = 2;
+
+exit(name);
