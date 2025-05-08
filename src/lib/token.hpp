@@ -2,10 +2,7 @@
 #define TOKEN_HPP
 
 #include <string>
-#include <utility>
-#include <iostream>
 #include <vector>
-#include <sstream>
 #include <unordered_map>
 
 enum class TokenType {

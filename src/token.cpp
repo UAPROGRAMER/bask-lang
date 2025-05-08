@@ -1,5 +1,8 @@
 #include "lib/token.hpp"
 
+#include <iostream>
+#include <utility>
+
 Token::Token(TokenType type, std::string value)
 : type(type), value(std::move(value)) {}
 

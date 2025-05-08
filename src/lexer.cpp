@@ -1,5 +1,7 @@
 #include "lib/lexer.hpp"
 
+#include <sstream>
+
 Lexer::Lexer(const std::string& source)
 : source(source), current('\0'), index(-1) {
     advance();

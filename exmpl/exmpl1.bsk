@@ -1,4 +1,4 @@
-var name : int = 10;
+var name = 10;
 
 name = 2;
 
