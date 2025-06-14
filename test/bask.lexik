@@ -1,0 +1,21 @@
+program ::= definitions*
+
+definitions ::= global_var_decl | global_const_decl | func_decl
+
+global_var_decl ::= "var" id "=" expression ";"
+
+global_const_decl ::= "const" id "=" expression ";"
+
+func_decl ::= "func" id "(" id ("," id)* ")" "{" statement* "}"
+
+statement ::= var_decl | const_decl | expression_statement | return
+
+var_decl ::= "var" id "=" expression ";"
+
+const_decl ::= "const" id "=" expression ";"
+
+expression_statement ::= expression ";"
+
+return ::= "return" (expression) ";"
+
+expression ::= 

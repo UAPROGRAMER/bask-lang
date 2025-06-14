@@ -10,8 +10,13 @@ enum class TokenType {
     ID,
     // keywords
     VAR,
+    CONST,
+    FUNC,
+    RETURN,
     // values
     INT,
+    FLOAT,
+    STRING,
     // symbols
     EQUAL,
     SEMI,
@@ -22,10 +27,15 @@ enum class TokenType {
     DIVIDE,
     LPAREN,
     RPAREN,
+    LCURLY,
+    RCURLY,
 };
 
 const std::unordered_map<std::string, TokenType> Keywords = {
-    {"var", TokenType::VAR}
+    {"var", TokenType::VAR},
+    {"const", TokenType::CONST},
+    {"func", TokenType::FUNC},
+    {"return", TokenType::RETURN}
 };
 
 class Token {

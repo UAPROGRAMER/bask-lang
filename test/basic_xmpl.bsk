@@ -1,5 +1,5 @@
-var a = 2;
+var a = 3;
 
-a = three() * a;
+a = three() - 1 * a;
 
 exit(a);
