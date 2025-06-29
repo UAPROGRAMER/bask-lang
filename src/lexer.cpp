@@ -48,6 +48,9 @@ Token Lexer::next() {
     
     if (std::isdigit(current))
         return num();
+    
+    if (current == '"')
+        return string();
 
     TokenType type;
     switch (current) {
@@ -81,7 +84,15 @@ Token Lexer::next() {
         case ')':
             type = TokenType::RPAREN;
             break;
+        case '{':
+            type = TokenType::LCURLY;
+            break;
+        case '}':
+            type = TokenType::RCURLY;
+            break;
         default:
+            std::cerr << "ERROR::LEXER::UNEXPECTED_CHAR\n";
+            std::cerr << "character = '" << current << "'\n";
             exit(1);
     }
 
@@ -106,13 +117,52 @@ Token Lexer::word() {
     return Token(TokenType::ID, value);
 }
 
-Token Lexer::num() {
+Token Lexer::string() {
+    advance();
     std::stringstream buf;
 
-    while (std::isdigit(current) || current == '.') {
+    while (current != '"') {
+        if (current == '\0')
+            exit(1);
+
+        if (current == '\\') {
+            advance();
+            switch (current) {
+                case '\0':
+                    exit(1);
+                case 'n':
+                    current = '\n';
+                    break;
+                default:
+                    break;
+            }
+        }
+
         buf << current;
         advance();
     }
+
+    advance();
+
+    return Token(TokenType::STRING, buf.str());
+}
+
+Token Lexer::num() {
+    std::stringstream buf;
+    bool dot = false;
+
+    while (std::isdigit(current) || current == '.') {
+        if (current == '.')
+            if (dot)
+                exit(1);
+            else
+                dot = true;
+        buf << current;
+        advance();
+    }
+
+    if (dot)
+        return Token(TokenType::FLOAT, buf.str());
     
     return Token(TokenType::INT, buf.str());
 }

@@ -1,5 +1,15 @@
+# comment
+
+'
+cool comment
+'
+
 const PI = 3.14;
 var operation = add;
+
+func t(a = 10) {
+    return a + 1;
+}
 
 func add(a, b) {
     return a + b;
@@ -10,9 +20,12 @@ func sub(a, b) {
 }
 
 func main() {
-    print(operation(1, 2), "\n");
+    print("Hello, World!\n");
+    print(operation(1, 2));
+    print("\n");
     operation = sub;
-    print(operation(PI, 2), "\n");
+    print(operation(PI, 2.0));
+    print("\n");
     operation = add;
-    return;
+    return 13;
 }

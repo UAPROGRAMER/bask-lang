@@ -16,6 +16,8 @@ private:
     Token next();
 
     Token word();
+    
+    Token string();
 
     Token num();
 public:

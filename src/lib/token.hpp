@@ -14,6 +14,7 @@ enum class TokenType {
     FUNC,
     RETURN,
     // values
+    _NULL,
     INT,
     FLOAT,
     STRING,
@@ -32,6 +33,7 @@ enum class TokenType {
 };
 
 const std::unordered_map<std::string, TokenType> Keywords = {
+    {"null", TokenType::_NULL},
     {"var", TokenType::VAR},
     {"const", TokenType::CONST},
     {"func", TokenType::FUNC},

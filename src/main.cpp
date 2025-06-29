@@ -1,6 +1,7 @@
 #include "lib/lexer.hpp"
-#include "lib/parser.hpp"
-#include "lib/interpreter.hpp"
+#include "lib/ast.hpp"
+//#include "lib/parser.hpp"
+//#include "lib/interpreter.hpp"
 
 #include <fstream>
 #include <sstream>
@@ -19,6 +20,7 @@ std::string read_file(char* path) {
 }
 
 int main(int argc, char* argv[]) {
+    /*
     if (argc < 2)
         return 1;
 
@@ -26,9 +28,15 @@ int main(int argc, char* argv[]) {
 
     std::vector<Token> tokens = tokenize(source);
 
-    std::vector<std::unique_ptr<AstStatement>> ast_tree = parse(tokens);
+    print_tokens(tokens);
 
-    run(ast_tree);
+    */
+
+    //std::vector<std::unique_ptr<AstStatement>> ast_tree = parse(tokens);
+
+    //run(ast_tree);
+
+    
 
     return 0;
 

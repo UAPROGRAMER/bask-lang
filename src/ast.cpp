@@ -3,6 +3,20 @@
 #include <iostream>
 #include <algorithm>
 
+// NULL
+
+AstNull::AstNull() {}
+
+AstType AstNull::get_type() const {
+    return AstType::_NULL;
+}
+
+void AstNull::print() const {
+    std::cout << "null";
+}
+
+// INT
+
 AstInt::AstInt(long value)
 : value(value) {}
 
@@ -14,23 +28,46 @@ void AstInt::print() const {
     std::cout << "int(" << value << ")";
 }
 
-size_t AstInt::get_size() const {
-    return sizeof(AstInt);
+// FLOAT
+
+AstFloat::AstFloat(double value)
+: value(value) {}
+
+AstType AstFloat::get_type() const {
+    return AstType::FLOAT;
 }
 
-AstVarGet::AstVarGet(std::string name) : name(std::move(name)) {};
-
-AstType AstVarGet::get_type() const {
-    return AstType::VAR_GET;
+void AstFloat::print() const {
+    std::cout << "float(" << value << ")";
 }
 
-void AstVarGet::print() const {
-    std::cout << "var_get(" << name << ")";
+// STRING
+
+AstString::AstString(std::string value)
+: value(std::move(value)) {}
+
+AstType AstString::get_type() const {
+    return AstType::STRING;
 }
 
-size_t AstVarGet::get_size() const {
-    return sizeof(AstVarGet);
+void AstString::print() const {
+    std::cout << "string(" << value << ")";
 }
+
+// NAME
+
+AstName::AstName(std::string value)
+: value(std::move(value)) {}
+
+AstType AstName::get_type() const {
+    return AstType::NAME;
+}
+
+void AstName::print() const {
+    std::cout << "name(" << value << ")";
+}
+
+// UNARY OP
 
 AstUnaryOp::AstUnaryOp(UnaryOpType type, std::unique_ptr<AstExpr> value)
 : type(type), value(std::move(value)) {}
@@ -45,9 +82,7 @@ void AstUnaryOp::print() const {
     std::cout << ")";
 }
 
-size_t AstUnaryOp::get_size() const {
-    return sizeof(AstUnaryOp) + value->get_size();
-}
+// BINARY OP
 
 AstBinaryOp::AstBinaryOp(BinaryOpType type, std::unique_ptr<AstExpr> left,
     std::unique_ptr<AstExpr> right)
@@ -65,11 +100,9 @@ void AstBinaryOp::print() const {
     std::cout << ")";
 }
 
-size_t AstBinaryOp::get_size() const {
-    return sizeof(AstBinaryOp) + left->get_size() + right->get_size();
-}
+// FUNC CALL
 
-AstFuncCall::AstFuncCall(std::string name, std::vector<std::unique_ptr<AstExpr>> args)
+AstFuncCall::AstFuncCall(std::unique_ptr<AstExpr> name, std::vector<std::unique_ptr<AstExpr>> args)
 : name(std::move(name)), args(std::move(args)) {}
 
 AstType AstFuncCall::get_type() const {
@@ -77,7 +110,9 @@ AstType AstFuncCall::get_type() const {
 }
 
 void AstFuncCall::print() const {
-    std::cout << "func_call(" << name << ", [";
+    std::cout << "func_call(";
+    name->print();
+    std::cout << ", [";
     for (size_t i = 0; i < args.size(); i++) {
         args.at(i)->print();
         if (i != args.size() - 1)
@@ -86,12 +121,22 @@ void AstFuncCall::print() const {
     std::cout << "])";
 }
 
-size_t AstFuncCall::get_size() const {
-    size_t size = sizeof(AstFuncCall) + args.size() * sizeof(std::unique_ptr<AstExpr>);
-    for (const auto& expr : args)
-        size += expr->get_size();
-    return size;
+// CONST DECL
+
+AstConstDecl::AstConstDecl(std::string name, std::unique_ptr<AstExpr> value)
+: name(std::move(name)), value(std::move(value)) {}
+
+AstType AstConstDecl::get_type() const {
+    return AstType::CONST_DECL;
 }
+
+void AstConstDecl::print() const {
+    std::cout << "const_decl(" << name << ", ";
+    value->print();
+    std::cout << ")";
+}
+
+// VAR DECL
 
 AstVarDecl::AstVarDecl(std::string name, std::unique_ptr<AstExpr> value)
 : name(std::move(name)), value(std::move(value)) {}
@@ -106,9 +151,7 @@ void AstVarDecl::print() const {
     std::cout << ")";
 }
 
-size_t AstVarDecl::get_size() const {
-    return sizeof(AstVarDecl) + value->get_size();
-}
+// VAR SET
 
 AstVarSet::AstVarSet(std::string name, std::unique_ptr<AstExpr> value)
 : name(std::move(name)), value(std::move(value)) {}
@@ -123,9 +166,22 @@ void AstVarSet::print() const {
     std::cout << ")";
 }
 
-size_t AstVarSet::get_size() const {
-    return sizeof(AstVarSet) + value->get_size();
+// RETURN
+
+AstReturn::AstReturn(std::unique_ptr<AstExpr> value)
+: value(std::move(value)) {}
+
+AstType AstReturn::get_type() const {
+    return AstType::RETURN;
 }
+
+void AstReturn::print() const {
+    std::cout << "return(";
+    value->print();
+    std::cout << ")";
+}
+
+// NO RETURN EXPR
 
 AstNoReturnExpr::AstNoReturnExpr(std::unique_ptr<AstExpr> expr)
 : expr(std::move(expr)) {}
@@ -140,6 +196,81 @@ void AstNoReturnExpr::print() const {
     std::cout << ")";
 }
 
-size_t AstNoReturnExpr::get_size() const {
-    return sizeof(AstNoReturnExpr) + expr->get_size();
+// GLOBAL CONST DECL
+
+AstGlobalConstDecl::AstGlobalConstDecl(std::string name, std::unique_ptr<AstExpr> value)
+: name(std::move(name)), value(std::move(value)) {}
+
+AstType AstGlobalConstDecl::get_type() const {
+    return AstType::GLOBAL_CONST_DECL;
+}
+
+void AstGlobalConstDecl::print() const {
+    std::cout << "global_const_decl(" << name << ", ";
+    value->print();
+    std::cout << ")";
+}
+
+// GLOBAL VAR DECL
+
+AstGlobalVarDecl::AstGlobalVarDecl(std::string name, std::unique_ptr<AstExpr> value)
+: name(std::move(name)), value(std::move(value)) {}
+
+AstType AstGlobalVarDecl::get_type() const {
+    return AstType::GLOBAL_CONST_DECL;
+}
+
+void AstGlobalVarDecl::print() const {
+    std::cout << "global_var_decl(" << name << ", ";
+    value->print();
+    std::cout << ")";
+}
+
+// FUNC DECL
+
+AstFuncDecl::AstFuncDecl(std::string name, std::vector<std::unique_ptr<AstVarDecl>> required_args,
+    std::vector<std::unique_ptr<AstVarDecl>> optional_args, std::vector<std::unique_ptr<AstStatement>> code)
+: name(std::move(name)), required_args(std::move(required_args)), optional_args(std::move(optional_args)), code(std::move(code)) {}
+
+AstType AstFuncDecl::get_type() const {
+    return AstType::FUNC_DECL;
+}
+
+void AstFuncDecl::print() const {
+    std::cout << "func_decl(" << name << ", [";
+    for (size_t i = 0; i < required_args.size(); i++) {
+        required_args.at(i)->print();
+        if (i != required_args.size() - 1)
+            std::cout << ", ";
+    }
+    std::cout << "], [";
+    for (size_t i = 0; i < optional_args.size(); i++) {
+        optional_args.at(i)->print();
+        if (i != optional_args.size() - 1)
+            std::cout << ", ";
+    }
+    std::cout << "], [";
+    for (size_t i = 0; i < code.size(); i++) {
+        code.at(i)->print();
+        if (i != code.size() - 1)
+            std::cout << ", ";
+    }
+    std::cout << "])";
+}
+
+// PROGRAM
+
+AstProgram::AstProgram() {}
+
+AstProgram::AstProgram(std::vector<std::unique_ptr<AstDeclaration>> code)
+: code(std::move(code)) {}
+
+void AstProgram::print() const {
+    std::cout << "Program([";
+    for (size_t i = 0; i < code.size(); i++) {
+        code.at(i)->print();
+        if (i != code.size() - 1)
+            std::cout << ", ";
+    }
+    std::cout << "])";
 }
